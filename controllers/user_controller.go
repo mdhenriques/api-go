@@ -129,3 +129,42 @@ func CreateUser(c *gin.Context) {
 		"user":    user,
 	})
 }
+
+// GetMe godoc
+// @Summary      Retorna os dados do usuário autenticado
+// @Description  Retorna informações do usuário com base no token JWT
+// @Tags         users
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200 {object} models.UserResponse
+// @Failure      401 {object} map[string]string
+// @Failure      404 {object} map[string]string
+// @Router       /me [get]
+func GetMe(c *gin.Context) {
+	userIdInterface, exists := c.Get("userId")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuario nao autenticado"})
+		return
+	}
+	userId := userIdInterface.(int)
+
+	var user models.User
+	result := database.DB.First(&user, userId)
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuario nao encontrado"})
+		return
+	}
+
+	userResponse := models.UserResponse{
+		ID:        user.ID,
+		Username:  user.Username,
+		Email:     user.Email,
+		Xp:        user.Xp,
+		Coins:     user.Coins,
+		CreatedAt: user.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: user.UpdatedAt.Format(time.RFC3339),
+	}
+	
+
+	c.JSON(http.StatusOK, userResponse)
+}

@@ -15,3 +15,13 @@ type User struct {
 
 
 }
+
+type UserResponse struct {
+	ID        uint   `json:"id"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	Xp        int    `json:"xp"`
+	Coins     int    `json:"coins"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}

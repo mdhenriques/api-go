@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   controllers.CreateUserInput:
     properties:
@@ -22,8 +23,29 @@ definitions:
     - email
     - password
     type: object
+  models.UserResponse:
+    properties:
+      coins:
+        type: integer
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      updated_at:
+        type: string
+      username:
+        type: string
+      xp:
+        type: integer
+    type: object
+host: localhost:8080
 info:
   contact: {}
+  description: Esta é uma API de exemplo com autenticação JWT
+  title: API Exemplo
+  version: "1.0"
 paths:
   /login:
     post:
@@ -61,6 +83,33 @@ paths:
       summary: Login de usuário
       tags:
       - auth
+  /me:
+    get:
+      description: Retorna informações do usuário com base no token JWT
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Retorna os dados do usuário autenticado
+      tags:
+      - users
   /users:
     post:
       consumes:
@@ -96,4 +145,9 @@ paths:
       summary: Cria um novo usuário
       tags:
       - users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

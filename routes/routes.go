@@ -1,13 +1,15 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
+    "github.com/gin-gonic/gin"
 
-	// Swagger:
-	"github.com/mdhenriques/api-go/controllers"
-	_ "github.com/mdhenriques/api-go/docs" // Import ne
-	"github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+    "github.com/mdhenriques/api-go/controllers"
+    "github.com/mdhenriques/api-go/middlewares"
+
+    // Swagger:
+    _ "github.com/mdhenriques/api-go/docs"                    // <-- Importa os docs gerados
+    swaggerFiles "github.com/swaggo/files"                    // <-- Import Swagger Files
+    ginSwagger "github.com/swaggo/gin-swagger"                // <-- Import Swagger Handler
 )
 
 func SetupRouter() *gin.Engine {
@@ -20,7 +22,13 @@ func SetupRouter() *gin.Engine {
 	r.POST("/users", controllers.CreateUser)
 	r.POST("/login", controllers.Login)
 
-	r.GET("swagger/*any", ginSwagger.WrapHandler((swaggerFiles.Handler)))
+	auth := r.Group("/")
+	auth.Use(middlewares.AuthMiddleware())
+	{
+		auth.GET("/me", controllers.GetMe)
+	}
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return r
 }
