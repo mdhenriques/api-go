@@ -26,7 +26,7 @@ func init() {
 }
 
 type LoginInput struct {
-	Email string `json:"email" binding:"required,email"`
+	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
 }
 
@@ -60,8 +60,8 @@ func Login(c *gin.Context) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-	"user_id": user.ID,
-	"exp": time.Now().Add(time.Hour * 72).Unix(),
+		"user_id": user.ID,
+		"exp":     time.Now().Add(time.Hour * 72).Unix(),
 	})
 
 	tokenString, err := token.SignedString((jwtSecret))
@@ -74,7 +74,6 @@ func Login(c *gin.Context) {
 		"token": tokenString,
 	})
 }
-
 
 type CreateUserInput struct {
 	Username string `json:"username" binding:"required"`
@@ -164,7 +163,6 @@ func GetMe(c *gin.Context) {
 		CreatedAt: user.CreatedAt.Format(time.RFC3339),
 		UpdatedAt: user.UpdatedAt.Format(time.RFC3339),
 	}
-	
 
 	c.JSON(http.StatusOK, userResponse)
 }

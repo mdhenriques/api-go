@@ -113,6 +113,63 @@ const docTemplate = `{
                 }
             }
         },
+        "/tasks": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Cria uma nova tarefa para o usuário autenticado",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Criar nova tarefa",
+                "parameters": [
+                    {
+                        "description": "Dados da nova tarefa",
+                        "name": "task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.CreateTaskInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.TaskResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "description": "Endpoint para criar um novo usuário",
@@ -168,6 +225,27 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.CreateTaskInput": {
+            "type": "object",
+            "required": [
+                "titulo"
+            ],
+            "properties": {
+                "descricao": {
+                    "type": "string"
+                },
+                "prazo_entrega": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "tempoEstimado": {
+                    "type": "number"
+                },
+                "titulo": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.CreateUserInput": {
             "type": "object",
             "required": [
@@ -201,6 +279,67 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "models.TaskResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "prazo_entrega": {
+                    "type": "string"
+                },
+                "recompensa_moedas": {
+                    "type": "integer"
+                },
+                "recompensa_xp": {
+                    "type": "integer"
+                },
+                "repetitiva": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "$ref": "#/definitions/models.TaskStatus"
+                },
+                "tempo_estimado": {
+                    "type": "number"
+                },
+                "titulo": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TaskStatus": {
+            "type": "string",
+            "enum": [
+                "pendente",
+                "andamento",
+                "concluida",
+                "atrasada",
+                "urgente"
+            ],
+            "x-enum-varnames": [
+                "PENDENTE",
+                "ANDAMENTO",
+                "CONCLUIDA",
+                "ATRASADA",
+                "URGENTE"
+            ]
         },
         "models.UserResponse": {
             "type": "object",

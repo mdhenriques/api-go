@@ -1,5 +1,19 @@
 basePath: /
 definitions:
+  controllers.CreateTaskInput:
+    properties:
+      descricao:
+        type: string
+      prazo_entrega:
+        format: date-time
+        type: string
+      tempoEstimado:
+        type: number
+      titulo:
+        type: string
+    required:
+    - titulo
+    type: object
   controllers.CreateUserInput:
     properties:
       email:
@@ -23,6 +37,49 @@ definitions:
     - email
     - password
     type: object
+  models.TaskResponse:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      descricao:
+        type: string
+      id:
+        type: integer
+      prazo_entrega:
+        type: string
+      recompensa_moedas:
+        type: integer
+      recompensa_xp:
+        type: integer
+      repetitiva:
+        type: boolean
+      status:
+        $ref: '#/definitions/models.TaskStatus'
+      tempo_estimado:
+        type: number
+      titulo:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.TaskStatus:
+    enum:
+    - pendente
+    - andamento
+    - concluida
+    - atrasada
+    - urgente
+    type: string
+    x-enum-varnames:
+    - PENDENTE
+    - ANDAMENTO
+    - CONCLUIDA
+    - ATRASADA
+    - URGENTE
   models.UserResponse:
     properties:
       coins:
@@ -110,6 +167,42 @@ paths:
       summary: Retorna os dados do usuário autenticado
       tags:
       - users
+  /tasks:
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova tarefa para o usuário autenticado
+      parameters:
+      - description: Dados da nova tarefa
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CreateTaskInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.TaskResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Criar nova tarefa
+      tags:
+      - tasks
   /users:
     post:
       consumes:

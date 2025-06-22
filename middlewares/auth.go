@@ -42,12 +42,12 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		
+
 		userId := int(claims["user_id"].(float64))
 
 		c.Set("userId", userId)
 
 		c.Next()
-		
+
 	}
 }
