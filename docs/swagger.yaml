@@ -203,6 +203,43 @@ paths:
       summary: Criar nova tarefa
       tags:
       - tasks
+  /tasks/{id}:
+    delete:
+      description: Deleta uma tarefa do usuário autenticado com base no ID
+      parameters:
+      - description: ID da Tarefa
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Tarefa deletada com sucesso
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Deletar tarefa
+      tags:
+      - tasks
   /users:
     post:
       consumes:

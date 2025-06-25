@@ -1,10 +1,7 @@
 package models
 
-import (
-	"time"
+import "time"
 
-	"gorm.io/gorm"
-)
 
 type TaskStatus string
 
@@ -17,7 +14,9 @@ const (
 )
 
 type Task struct {
-	gorm.Model
+	ID        uint `gorm:"primaryKey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 
 	UserID uint `gorm:"not null" json:"user_id"`
 

@@ -27,6 +27,8 @@ func SetupRouter() *gin.Engine {
 	{
 		auth.GET("/me", controllers.GetMe)
 		auth.POST("/tasks", controllers.CreateTask)
+		auth.DELETE("/tasks/:id", controllers.DeleteTask)
+
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

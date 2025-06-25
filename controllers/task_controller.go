@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -57,4 +58,44 @@ func CreateTask(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, task)
+}
+
+// @Summary      Deletar tarefa
+// @Description  Deleta uma tarefa do usuário autenticado com base no ID
+// @Tags         tasks
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        id path int true "ID da Tarefa"
+// @Success      204 "Tarefa deletada com sucesso"
+// @Failure      400 {object} map[string]string
+// @Failure      401 {object} map[string]string
+// @Failure      404 {object} map[string]string
+// @Router       /tasks/{id} [delete]
+func DeleteTask(c *gin.Context) {
+	userIdInterface, exists := c.Get("userId")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+	userId := userIdInterface.(int)
+
+	idParam := c.Param("id")
+	taskId, err := strconv.Atoi(idParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+
+	var task models.Task
+	if err := database.DB.Where("id = ? AND user_id = ?", taskId, userId).First(&task).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Tarefa não encontrada"})
+		return
+	}
+
+	if err := database.DB.Delete(&task).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao deletar tarefa"})
+		return
+	}
+
+	c.Status(http.StatusNoContent)
 }
